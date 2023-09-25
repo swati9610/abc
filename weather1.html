@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather App</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .iphone-container {
+    background: url('https://img.freepik.com/premium-photo/soft-cloud-background-blue-sky-with-cloud_6529-402.jpg?w=740') no-repeat center center fixed;
+    background-size: cover;
+    width: 350px; 
+    height: 650px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+    position: relative;
+  }
+
+  .weather-container {
+    width: 70%; 
+    height: 40%; 
+    background-color: rgba(0, 0, 0, 0.5); 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    color: white;
+  }
+
+  .weather-info {
+    padding: 10px;
+  }
+
+  .location {
+    font-size: 18px; 
+    margin: 0;
+  }
+
+  .temperature {
+    margin: 10px 0;
+  }
+
+  .conditions {
+    font-size: 16px; 
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+<div class="iphone-container">
+  <div class="weather-container">
+    <div class="weather-info">
+      <h1 class="location">Loading...</h1>
+      <p class="temperature">Loading...</p>
+      <p class="conditions">Loading...</p>
+    </div>
+  </div>
+  <div class="enter-city">
+    <h2>Enter a City</h2>
+    <input type="text" id="cityInput" placeholder="City name...">
+    <button id="fetchWeatherBtn">Get Weather</button>
+  </div>
+</div>
+<script>
+  const weatherContainer = document.querySelector('.weather-container');
+  const locationElement = document.querySelector('.location');
+  const temperatureElement = document.querySelector('.temperature');
+  const conditionsElement = document.querySelector('.conditions');
+
+  const apiKey = '0999b431807982ae652c0f9dc6d1febf'; 
+  const apiBaseUrl = 'https://api.openweathermap.org/data/2.5/weather';
+
+  async function fetchWeatherData(city) {
+    const apiUrl = `${apiBaseUrl}?q=${city}&units=metric&appid=${apiKey}`;
+    try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch weather data');
+      }
+      const data = await response.json();
+      displayWeatherData(data);
+    } catch (error) {
+      console.error('Error fetching weather data:', error);
+      locationElement.textContent = 'Error fetching data';
+      temperatureElement.textContent = '';
+      conditionsElement.textContent = '';
+    }
+  }
+
+  function displayWeatherData(data) {
+    locationElement.textContent = data.name;
+    temperatureElement.textContent = `${data.main.temp}°C`;
+    conditionsElement.textContent = data.weather[0].description;
+  }
+
+  
+  document.getElementById('fetchWeatherBtn').addEventListener('click', () => {
+    const userCity = document.getElementById('cityInput').value;
+    if (userCity) {
+      fetchWeatherData(userCity);
+    } else {
+      locationElement.textContent = 'City not provided';
+      temperatureElement.textContent = '';
+      conditionsElement.textContent = '';
+    }
+  });
+</script>
+</body>
+</html>
+
+
+
